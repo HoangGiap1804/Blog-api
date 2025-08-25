@@ -11,10 +11,13 @@ import bcrypt from 'bcrypt';
 import register from '@/controllers/v1/auth/register';
 import login from '@/controllers/v1/auth/login';
 import refreshToken from '@/controllers/v1/auth/refresh_token';
+import logout from '@/controllers/v1/auth/logout';
+
 /**
  * Middlewares
  */
 import validationError from '@/middlewares/validationError';
+import authenticate from '@/middlewares/authenticate';
 
 /**
  * Models
@@ -23,6 +26,11 @@ import User from '@/models/user';
 
 const router = Router();
 
+/**
+ * This code provided is a chain of middleware validation using
+ * epxress-validator library to validate input data from request.
+ * Any errors will be passed to validationError to be handled.
+ */
 router.post(
   '/register',
   body('email')
@@ -99,5 +107,7 @@ router.post(
     .withMessage('Invalid refresh token'),
   refreshToken,
 );
+
+router.post('/logout', authenticate, logout);
 
 export default router;
