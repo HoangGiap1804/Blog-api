@@ -18,6 +18,7 @@ import Token from '@/models/token';
 import type { Request, Response } from 'express';
 import type { IUser } from '@/models/user';
 
+// create subtype of IUser that only has 3 properties: email, password, role
 type UserData = Pick<IUser, 'email' | 'password' | 'role'>;
 
 const register = async (req: Request, res: Response): Promise<void> => {
