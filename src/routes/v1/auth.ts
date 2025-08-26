@@ -1,5 +1,5 @@
 /**
- * Node models
+ * Node modules
  */
 import { Router } from 'express';
 import { body, cookie } from 'express-validator';
