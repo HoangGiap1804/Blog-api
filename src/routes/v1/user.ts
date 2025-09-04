@@ -9,6 +9,7 @@ import { body, param, query } from 'express-validator';
  */
 import getCurrentUser from '@/controllers/v1/user/get_current_user';
 import getAllUser from '@/controllers/v1/user/get_all_user';
+import getUserById from '@/controllers/v1/user/get_user_by_id';
 
 /**
  * Middlewares
@@ -24,6 +25,7 @@ import User from '@/models/user';
 
 const router = Router();
 
+// Get information current user
 router.get(
   '/current',
   authenticate,
@@ -47,4 +49,16 @@ router.get(
   validationError,
   getAllUser,
 );
+
+// Get user by id
+
+router.get(
+  '/:userId',
+  authenticate,
+  authorize(['admin']),
+  param('userId').notEmpty().isMongoId().withMessage('Invalid user ID '),
+  validationError,
+  getUserById,
+);
+
 export default router;
