@@ -14,7 +14,7 @@ import User from '@/models/user';
 import type { Request, Response } from 'express';
 
 const deleteUserByID = async (req: Request, res: Response): Promise<void> => {
-  const userId = req.userId;
+  const userId = req.params.userId;
 
   try {
     await User.deleteOne({ _id: userId });
