@@ -13,10 +13,7 @@ import User from '@/models/user';
  */
 import type { Request, Response } from 'express';
 
-const deleteCurrentUser = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+const deleteUserByID = async (req: Request, res: Response): Promise<void> => {
   const userId = req.userId;
 
   try {
@@ -33,8 +30,8 @@ const deleteCurrentUser = async (
       error: err,
     });
 
-    logger.error('Error while deleting current user account', err);
+    logger.error('Error while deleting user account by ID', err);
   }
 };
 
-export default deleteCurrentUser;
+export default deleteUserByID;

@@ -10,6 +10,7 @@ import { body, param, query } from 'express-validator';
 import getCurrentUser from '@/controllers/v1/user/get_current_user';
 import updateCurrentUser from '@/controllers/v1/user/update_current_user';
 import deleteCurrentUser from '@/controllers/v1/user/delete_current_user';
+import deleteUserByID from '@/controllers/v1/user/delete_current_user_by_id';
 
 /**
  * Middlewares
@@ -90,6 +91,16 @@ router.delete(
   '/current',
   authenticate,
   authorize(['admin', 'user']),
+  deleteCurrentUser,
+);
+
+// Delete user account by Id
+router.delete(
+  '/:userId',
+  authenticate,
+  authorize(['admin']),
+  param('userId').notEmpty().isMongoId().withMessage('Invalid user ID'),
+  validationError,
   deleteCurrentUser,
 );
 
