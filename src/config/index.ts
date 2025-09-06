@@ -23,6 +23,9 @@ const config = {
   WHITELIST_ADMINS_MAIL: ['hgiap1804.2@gmail.com', 'admin@gmail.com'],
   defaultResLimit: 20,
   defaultResOffset: 0,
+  CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 };
 
 export default config;
