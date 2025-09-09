@@ -34,10 +34,11 @@ const createBlog = async (req: Request, res: Response): Promise<void> => {
 
     const userId = req.userId;
 
+    const cleanTitle = purify.sanitize(title);
     const cleanContent = purify.sanitize(content);
 
     const newBlog = await Blog.create({
-      title,
+      title: cleanTitle,
       content: cleanContent,
       banner,
       status,

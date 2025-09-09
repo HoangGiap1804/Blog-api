@@ -21,7 +21,7 @@ export interface IBlog {
   author: Types.ObjectId;
   viewsCount: number;
   likesCount: number;
-  commentcount: number;
+  commentCount: number;
   status: 'draft' | 'published';
 }
 
@@ -75,6 +75,10 @@ const blogSchema = new Schema<IBlog>(
       type: Number,
       default: 0,
     },
+    commentCount: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: {
@@ -95,7 +99,7 @@ blogSchema.pre('validate', function (next) {
   if (this.title && !this.slug) {
     this.slug = genSlug(this.title);
   }
-  
+
   next();
 });
 

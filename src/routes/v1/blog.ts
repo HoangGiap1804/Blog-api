@@ -3,7 +3,6 @@
  */
 import { Router } from 'express';
 import { param, query, body, cookie } from 'express-validator';
-import bcrypt from 'bcrypt';
 import multer from 'multer';
 
 /**
@@ -13,6 +12,9 @@ import createBlog from '@/controllers/v1/blog/create_blog';
 import getAllBlog from '@/controllers/v1/blog/get_all_blog';
 import getBlogByUserId from '@/controllers/v1/blog/get_blogs_by_user_id';
 import getBlogBySlug from '@/controllers/v1/blog/get_blog_by_slug';
+import updateBlogByID from '@/controllers/v1/blog/update_blog_by_id';
+import deleteBlogByID from '@/controllers/v1/blog/delete_blog_by_id';
+
 /**
  * Middlewares
  */
@@ -24,14 +26,14 @@ import uploadBlogBanner from '@/middlewares/uploadBlogBanner';
 /**
  * Models
  */
-
 const router = Router();
 const upload = multer();
 
+// Create a blog
 router.post(
   '/',
   authenticate,
-  authorize(['admin']),
+  authorize(['admin', 'user']),
   upload.single('banner_image'),
   body('title')
     .trim()
@@ -50,6 +52,7 @@ router.post(
   createBlog,
 );
 
+// get all blog
 router.get(
   '/',
   authenticate,
@@ -96,6 +99,40 @@ router.get(
   param('slug').notEmpty().withMessage('Invalid is required'),
   validationError,
   getBlogBySlug,
+);
+
+// Update a blog by id
+router.put(
+  '/:blogId',
+  authenticate,
+  authorize(['admin']),
+  param('blogId').isMongoId().withMessage('Invalid blog ID'),
+  upload.single('banner_image'),
+  body('title')
+    .trim()
+    .notEmpty()
+    .withMessage('Title is required')
+    .isLength({ max: 180 })
+    .withMessage('Title must be less than 180 characters'),
+  body('content').trim().notEmpty().withMessage('Title is required'),
+  body('status')
+    .optional()
+    .trim()
+    .isIn(['draft', 'published'])
+    .withMessage('Status must be one of value, draft or published'),
+  validationError,
+  uploadBlogBanner('put'),
+  updateBlogByID,
+);
+
+// Delete a blog by id
+router.delete(
+  '/:blogId',
+  authenticate,
+  authorize(['admin']),
+  param('blogId').isMongoId().withMessage('Invalid blog ID'),
+  validationError,
+  deleteBlogByID,
 );
 
 export default router;
