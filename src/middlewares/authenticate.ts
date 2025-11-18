@@ -14,6 +14,7 @@ import { logger } from '@/lib/winston';
  */
 import type { Request, Response, NextFunction } from 'express';
 import type { Types } from 'mongoose';
+import type { AuthRole } from './authorize';
 
 /**
  * Ther perpose of the Middleware Authentication is:
@@ -38,11 +39,15 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const [_, token] = authHeader.split(' ');
 
   try {
-    // Verify token and extract the userId from the payload
-    const jwtPayload = verifyAccessToken(token) as { userId: Types.ObjectId };
+    // Verify token and extract the userId and role from the payload
+    const jwtPayload = verifyAccessToken(token) as {
+      userId: Types.ObjectId;
+      role: AuthRole;
+    };
 
-    // Attach the userId to the request object for late us
+    // Attach the userId and role to the request object for later use
     req.userId = jwtPayload.userId;
+    req.role = jwtPayload.role;
 
     // Process to the next middleware or route handle
     return next();

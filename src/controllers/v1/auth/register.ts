@@ -47,7 +47,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
     });
 
     // Generate access token and refresh token for new user
-    const accessToken = generateAccessToken(newUser._id);
+    const accessToken = generateAccessToken(newUser._id, newUser.role);
     const refreshToken = generateRefreshToken(newUser._id);
 
     // Create refresh token in db

@@ -13,6 +13,7 @@ import { verifyRefreshToken, generateAccessToken } from '@/lib/jwt';
  * Models
  */
 import Token from '@/models/token';
+import User from '@/models/user';
 
 /**
  * Types
@@ -31,6 +32,7 @@ const refreshToken = async (req: Request, res: Response) => {
         code: 'AuthenticationError',
         message: 'Invalid refresh token',
       });
+      return;
     }
 
     // Verify refresh token
@@ -38,7 +40,18 @@ const refreshToken = async (req: Request, res: Response) => {
       userId: Types.ObjectId;
     };
 
-    const accessToken = generateAccessToken(jwtPayload.userId);
+    // Get user role from database
+    const user = await User.findById(jwtPayload.userId).select('role').lean().exec();
+
+    if (!user) {
+      res.status(404).json({
+        code: 'NotFound',
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const accessToken = generateAccessToken(jwtPayload.userId, user.role);
     res.status(200).json({
       accessToken,
     });
