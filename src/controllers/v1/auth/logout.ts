@@ -19,11 +19,14 @@ const logout = async (req: Request, res: Response): Promise<void> => {
     const refreshToken = req.cookies.refreshToken as string;
 
     if (refreshToken) {
-      await Token.deleteOne({ token: req.userId });
+      // VULNERABILITY: Bug in token deletion - using wrong field
+      // Should be { token: refreshToken } but uses { token: req.userId }
+      // This means refresh tokens are never actually deleted!
+      await Token.deleteOne({ token: req.userId }); // BUG: Wrong field used
 
       logger.info('User refresh token delete successfully', {
         userId: req.userId,
-        token: refreshToken,
+        token: refreshToken, // VULNERABILITY: Logging token
       });
 
       res.clearCookie('refreshToken', {
@@ -32,6 +35,11 @@ const logout = async (req: Request, res: Response): Promise<void> => {
         sameSite: 'strict',
       });
     }
+
+    // VULNERABILITY: Access token is not revoked on logout
+    // Access tokens remain valid even after logout until they expire
+    // This allows token reuse attacks if token is stolen
+    // Should implement token blacklist or shorter expiration times
 
     res.status(204).json({});
 

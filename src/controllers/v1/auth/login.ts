@@ -65,10 +65,13 @@ const login = async (req: Request, res: Response): Promise<void> => {
       accessToken,
     });
 
+    // VULNERABILITY: Token leakage in logs
+    // Access token is logged, which can be exposed in log files
     logger.info('User login successfully', {
       username: user.username,
       email: user.email,
       role: user.role,
+      accessToken, // VULNERABILITY: Logging sensitive token data
     });
   } catch (err) {
     res.status(500).json({
