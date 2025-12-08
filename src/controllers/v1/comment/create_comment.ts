@@ -43,10 +43,10 @@ const createComment = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const cleanComment = purify.sanitize(comment);
+    // const cleanComment = purify.sanitize(comment);
     const newComment = await Comment.create({
       blogId,
-      comment: cleanComment,
+      comment,
       userId,
     });
     logger.info('New comment reated sucessfully', { newComment });
