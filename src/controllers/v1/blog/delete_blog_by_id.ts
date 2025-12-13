@@ -38,8 +38,11 @@ const deleteBlogByID = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (user?._id !== blog.author._id && user?.role !== 'admin') {
-      res.status(402).json({
+    if (
+      user?._id?.toString() !== blog.author?.toString() &&
+      user?.role !== 'admin'
+    ) {
+      res.status(403).json({
         code: 'AuthorizationError',
         message: 'Access denied, insufficient permission',
       });

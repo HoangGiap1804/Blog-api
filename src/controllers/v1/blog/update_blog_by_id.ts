@@ -44,10 +44,10 @@ const updateBlogByID = async (req: Request, res: Response): Promise<void> => {
     }
 
     const user = await User.findById(userId).select('role').lean().exec();
-    if (blog.author._id !== user?._id || user?.role !== 'admin') {
+    if (blog.author._id.toString() !== user?._id?.toString()) {
       res.status(403).json({
         code: 'AuthorizationError',
-        message: 'Access dinied, insufficient permission',
+        message: 'Access denied, insufficient permission',
       });
 
       logger.warn(

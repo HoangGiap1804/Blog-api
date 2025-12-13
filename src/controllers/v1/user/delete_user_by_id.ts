@@ -35,10 +35,12 @@ const deleteUserByID = async (req: Request, res: Response): Promise<void> => {
       blogs,
     });
 
-    await cloudinary.api.delete_resources(publicIds);
-    logger.info('Mutiple blog banners deleted from Cloundinary', {
-      publicIds,
-    });
+    if (publicIds.length > 0) {
+      await cloudinary.api.delete_resources(publicIds);
+      logger.info('Mutiple blog banners deleted from Cloundinary', {
+        publicIds,
+      });
+    }
 
     await User.deleteOne({ _id: userId });
 
