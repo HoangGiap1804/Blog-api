@@ -51,7 +51,7 @@ const refreshToken = async (req: Request, res: Response) => {
       return;
     }
 
-    const accessToken = generateAccessToken(jwtPayload.userId, user.role);
+    const accessToken = generateAccessToken(jwtPayload.userId);
     res.status(200).json({
       accessToken,
     });

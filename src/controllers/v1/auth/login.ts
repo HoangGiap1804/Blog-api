@@ -37,7 +37,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate access token and refresh token for new user
-    const accessToken = generateAccessToken(user._id, user.role);
+    const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
 
     // Create refresh token in db

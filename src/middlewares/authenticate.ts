@@ -25,28 +25,15 @@ import type { AuthRole } from './authorize';
  * - If other error, return a JSON response with status code 500
  */
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  // VULNERABILITY: Accept token from multiple sources (query string, header, cookie)
-  // This increases attack surface and allows token leakage via URL logs, referrer headers, etc.
-  
   let token: string | undefined;
-  
+
   // Try to get token from Authorization header
   const authHeader = req.headers.authorization;
   if (authHeader?.startsWith('Bearer ')) {
     const [_, headerToken] = authHeader.split(' ');
     token = headerToken;
   }
-  
-  // VULNERABILITY: Accept token from query string
-  // Tokens in URLs can be logged in server logs, browser history, referrer headers
-  if (!token && req.query.token) {
-    token = req.query.token as string;
-  }
-  
-  // VULNERABILITY: Accept token from cookie (should only be for refresh tokens)
-  if (!token && req.cookies.accessToken) {
-    token = req.cookies.accessToken as string;
-  }
+
 
   if (!token) {
     res.status(401).json({
@@ -55,10 +42,8 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
     });
     return;
   }
-  
-  // VULNERABILITY: Log token for debugging (exposes sensitive data)
+
   logger.info('Authenticating request', {
-    token, // VULNERABILITY: Logging token
     path: req.path,
   });
 
