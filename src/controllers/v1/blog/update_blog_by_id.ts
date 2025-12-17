@@ -31,6 +31,7 @@ const purify = DOMPurify(window);
 const updateBlogByID = async (req: Request, res: Response): Promise<void> => {
   const blogId = req.params.blogId;
   const userId = req.userId;
+  const role = req.role;
   const { title, content, status, banner } = req.body;
 
   try {
@@ -42,9 +43,9 @@ const updateBlogByID = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-
-    const user = await User.findById(userId).select('role').lean().exec();
-    if (blog.author._id.toString() !== user?._id?.toString()) {
+    logger.info("blog user id", blog.author._id.toString());
+    logger.info("user id", userId);
+    if (role !== 'admin' && blog.author._id.toString() !== userId?.toString()) {
       res.status(403).json({
         code: 'AuthorizationError',
         message: 'Access denied, insufficient permission',

@@ -24,7 +24,7 @@ const updateCurrentUser = async (
   const userId = req.userId;
 
   const {
-    username,
+
     email,
     password,
     first_name,
@@ -47,8 +47,7 @@ const updateCurrentUser = async (
       return;
     }
 
-    if (username) user.username = username;
-    if (email) user.username = email;
+    if (email) user.email = email;
     if (password) user.password = password;
     if (first_name) user.firstName = first_name;
     if (last_name) user.lastName = last_name;

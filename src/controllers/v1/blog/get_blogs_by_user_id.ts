@@ -7,7 +7,6 @@ import config from '@/config';
 /**
  * Models
  */
-import User from '@/models/user';
 import Blog from '@/models/blog';
 
 /**
@@ -28,14 +27,9 @@ const getBlogByUserId = async (req: Request, res: Response): Promise<void> => {
     const userId = req.params.userId;
     const currentUserId = req.userId;
 
-    const cunrrentUser = await User.findById(currentUserId)
-      .select('role')
-      .lean()
-      .exec();
-
     const query: QueryType = {};
 
-    if (cunrrentUser?.role === 'user') {
+    if (currentUserId?.toString() !== userId) {
       query.status = 'published';
     }
 
@@ -55,7 +49,7 @@ const getBlogByUserId = async (req: Request, res: Response): Promise<void> => {
       total,
       blogs,
     });
-    
+
     logger.info('Get all blog by user ID successfully');
   } catch (err) {
     res.status(500).json({

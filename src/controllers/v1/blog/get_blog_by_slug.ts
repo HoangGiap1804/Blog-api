@@ -19,8 +19,7 @@ const getBlogBySlug = async (req: Request, res: Response): Promise<void> => {
   try {
     const slug = req.params.slug;
     const userId = req.userId;
-
-    const user = await User.findById(userId).select('role').lean().exec();
+    const role = req.role;
 
     const blog = await Blog.findOne({ slug })
       .select('-banner.publicId -__v')
@@ -38,13 +37,15 @@ const getBlogBySlug = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (user?.role === 'user' && blog?.status === 'draft') {
-      res.status(403).json({
-        code: 'AuthorizationError',
-        message: 'access denied, insufficient permissions',
-      });
-      logger.error('A user try to access a draft blog', { userId, blog });
-      return;
+    if (role !== 'admin' && userId?.toString() !== blog?.author._id.toString()) {
+      if (blog?.status === 'draft') {
+        res.status(403).json({
+          code: 'AuthorizationError',
+          message: 'access denied, insufficient permissions',
+        });
+        logger.error('A user try to access a draft blog', { userId, blog });
+        return;
+      }
     }
 
     res.status(200).json({

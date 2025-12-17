@@ -22,9 +22,9 @@ import type { Request, Response } from 'express';
 const deleteBlogByID = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
+    const role = req.role;
     const blogId = req.params.blogId;
 
-    const user = await User.findById(userId).select('role').lean().exec();
     const blog = await Blog.findById(blogId)
       .select('author banner')
       .lean()
@@ -39,8 +39,8 @@ const deleteBlogByID = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (
-      user?._id?.toString() !== blog.author?.toString() &&
-      user?.role !== 'admin'
+      userId?.toString() !== blog.author?._id?.toString() &&
+      role !== 'admin'
     ) {
       res.status(403).json({
         code: 'AuthorizationError',

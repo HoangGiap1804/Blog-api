@@ -37,11 +37,9 @@ router.post(
   upload.single('banner_image'),
   body('title')
     .trim()
-    .notEmpty()
-    .withMessage('Title is required')
     .isLength({ max: 180 })
     .withMessage('Title must be less than 180 characters'),
-  body('content').trim().notEmpty().withMessage('Title is required'),
+  body('content').trim(),
   body('status')
     .optional()
     .trim()
@@ -105,7 +103,7 @@ router.get(
 router.put(
   '/:blogId',
   authenticate,
-  authorize(['admin']),
+  authorize(['admin', 'user']),
   param('blogId').isMongoId().withMessage('Invalid blog ID'),
   upload.single('banner_image'),
   body('title')
@@ -129,7 +127,7 @@ router.put(
 router.delete(
   '/:blogId',
   authenticate,
-  authorize(['admin']),
+  authorize(['admin', 'user']),
   param('blogId').isMongoId().withMessage('Invalid blog ID'),
   validationError,
   deleteBlogByID,

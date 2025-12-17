@@ -30,10 +30,9 @@ const getAllBlog = async (req: Request, res: Response): Promise<void> => {
     const offset =
       parseInt(req.query.offset as string) || config.defaultResOffset;
 
-    const user = await User.findById(userId).select('role').lean().exec();
     const query: QueryType = {};
 
-    if (user?.role === 'user') {
+    if (req.role === 'user') {
       query.status = 'published';
     }
 
